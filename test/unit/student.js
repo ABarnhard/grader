@@ -4,12 +4,23 @@
 
 var expect = require('chai').expect;
 var Student = require('../../app/models/student');
-
+var Mongo = require('mongodb');
+var connect = require('../../app/lib/mongodb');
 
 var s1;
 var sObj1 = {name:'Sara', color:'#ccc'};
 
-describe('student', function(){
+describe('Student', function(){
+  before(function(done){
+    connect('grade-test', function(){
+      done();
+    });
+  });
+  beforeEach(function(done){
+    Student.collection.remove(function(){
+      done();
+    });
+  });
   describe('constructor', function(){
     it('should create a student with proper attributes', function(){
       s1 = new Student(sObj1);
@@ -59,5 +70,25 @@ describe('student', function(){
       expect(typeof s1.tests[0]).to.equal('number');
     });
   });
-
+  describe('#save', function(){
+    it('should save a student to the database', function(done){
+      s1 = new Student(sObj1);
+      s1.save(function(){
+        expect(s1._id).to.be.instanceof(Mongo.ObjectID);
+        done();
+      });
+    });
+  });
+  describe('.find', function(){
+    it('should return an array of all the students', function(done){
+      s1 = new Student(sObj1);
+      s1.save(function(){
+        Student.find(function(students){
+          expect(students).to.have.length(1);
+          expect(students[0]).to.respondTo('avg');
+          done();
+        });
+      });
+    });
+  });
 });

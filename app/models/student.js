@@ -1,5 +1,7 @@
 'use strict';
 
+var _ = require('lodash');
+
 function Student(obj){
   this.name = obj.name;
   this.color = obj.color;
@@ -7,6 +9,10 @@ function Student(obj){
   this._suspended = {suspended:'no', color:'green'};
   this._honorRoll = {honor:'no', color:'red'};
 }
+
+Object.defineProperty(Student, 'collection', {
+  get: function(){return global.mongodb.collection('students');}
+});
 
 Student.prototype.avg = function(){
   if(!this.tests.length){return 0;}
@@ -54,4 +60,20 @@ Student.prototype.addTest = function(obj){
   this.update();
 };
 
+Student.prototype.save = function(cb){
+  Student.collection.save(this, cb);
+};
+
+Student.find = function(cb){
+  Student.collection.find().toArray(function(err, objects){
+    var students = objects.map(function(o){return reProto(o);});
+    cb(students);
+  });
+};
+
 module.exports = Student;
+
+// Helper Functions
+function reProto(obj){
+  return _.create(Student.prototype, obj);
+}
