@@ -1,6 +1,7 @@
 'use strict';
 
 var _ = require('lodash');
+var Mongo = require('mongodb');
 
 function Student(obj){
   this.name = obj.name;
@@ -68,6 +69,15 @@ Student.find = function(cb){
   Student.collection.find().toArray(function(err, objects){
     var students = objects.map(function(o){return reProto(o);});
     cb(students);
+  });
+};
+
+Student.findById = function(id, cb){
+  id = Mongo.ObjectID(id);
+
+  Student.collection.findOne({_id:id}, function(err, obj){
+    var student = reProto(obj);
+    cb(student);
   });
 };
 

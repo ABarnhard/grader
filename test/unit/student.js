@@ -7,7 +7,7 @@ var Student = require('../../app/models/student');
 var Mongo = require('mongodb');
 var connect = require('../../app/lib/mongodb');
 
-var s1;
+var s1, s2, s3;
 var sObj1 = {name:'Sara', color:'#ccc'};
 
 describe('Student', function(){
@@ -18,7 +18,17 @@ describe('Student', function(){
   });
   beforeEach(function(done){
     Student.collection.remove(function(){
-      done();
+      s1 = new Student(sObj1);
+      s2 = new Student({name:'Bob', color:'green'});
+      s3 = new Student({name:'John', color:'blue'});
+
+      s1.save(function(){
+        s2.save(function(){
+          s3.save(function(){
+            done();
+          });
+        });
+      });
     });
   });
   describe('constructor', function(){
@@ -81,14 +91,20 @@ describe('Student', function(){
   });
   describe('.find', function(){
     it('should return an array of all the students', function(done){
-      s1 = new Student(sObj1);
-      s1.save(function(){
-        Student.find(function(students){
-          expect(students).to.have.length(1);
-          expect(students[0]).to.respondTo('avg');
-          done();
-        });
+      Student.find(function(students){
+        expect(students).to.have.length(3);
+        expect(students[0]).to.respondTo('avg');
+        done();
       });
     });
   });
+  describe('.findById', function(){
+    it('should find one student from an id string', function(done){
+      Student.findById(s2._id.toString(), function(student){
+        expect(student).to.eql(s2);
+        done();
+      });
+    });
+  });
+
 });
