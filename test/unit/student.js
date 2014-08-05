@@ -26,7 +26,15 @@ describe('student', function(){
       s1 = new Student(sObj1);
       s1.tests = [95, 85, 75, 65, 55];
       expect(s1.avg()).to.be.closeTo(75, 0.1);
+      s1.tests = [];
+      expect(s1.avg()).to.equal(0);
     });
   });
-
+  describe('#letter', function(){
+    it('should return a letter grade vased on #avg', function(){
+      s1 = new Student(sObj1);
+      s1.tests = [95, 85, 75, 65, 55];
+      expect(s1.letter()).to.equal('C');
+    });
+  });
 });
