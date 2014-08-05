@@ -65,6 +65,12 @@ Student.prototype.save = function(cb){
   Student.collection.save(this, cb);
 };
 
+Student.prototype.avgColor = function(){
+  return gradeColor(this.avg());
+};
+
+Student.prototype.gradeColor = gradeColor;
+
 Student.find = function(cb){
   Student.collection.find().toArray(function(err, objects){
     var students = objects.map(function(o){return reProto(o);});
@@ -86,4 +92,18 @@ module.exports = Student;
 // Helper Functions
 function reProto(obj){
   return _.create(Student.prototype, obj);
+}
+
+function gradeColor(num){
+  if(num < 60){
+    return 'brown';
+  }else if(num < 70){
+    return 'red';
+  }else if(num < 80){
+    return 'orange';
+  }else if(num < 90){
+    return 'green';
+  }else{
+    return 'blue';
+  }
 }
