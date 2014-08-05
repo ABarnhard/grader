@@ -31,5 +31,27 @@ Student.prototype.letter = function(){
   }
 };
 
+Student.prototype.update = function(){
+  if(!this.tests.length){return;}
+
+  if(this.avg() > 95){
+    this._honorRoll = {honor:'yes', color:'green'};
+  }
+
+  var count = 0;
+  for(var i = 0; i < this.tests.length; i++){
+    count += (this.tests[i] < 60) ? 1 : 0;
+    if(count >= 3){
+      this._suspended = {suspended:'yes', color:'red'};
+      break;
+    }
+  }
+};
+
+Student.prototype.addTest = function(obj){
+  var score = parseFloat(obj.score);
+  this.tests.push(score);
+  this.update();
+};
 
 module.exports = Student;

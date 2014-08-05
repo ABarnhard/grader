@@ -37,4 +37,27 @@ describe('student', function(){
       expect(s1.letter()).to.equal('C');
     });
   });
+  describe('#update', function(){
+    it('should update _honor based on scores', function(){
+      s1 = new Student(sObj1);
+      s1.tests = [96];
+      s1.update();
+      expect(s1._honorRoll).to.eql({honor:'yes', color:'green'});
+    });
+    it('should suspend a student based on fails', function(){
+      s1 = new Student(sObj1);
+      s1.tests = [34,16,45,72];
+      s1.update();
+      expect(s1._suspended).to.eql({ suspended:'yes', color:'red'});
+    });
+  });
+  describe('#addTest', function(){
+    it('should add test to student\'s tests array', function(){
+      s1 = new Student(sObj1);
+      s1.addTest({score: '67.1'});
+      expect(s1.tests).to.have.length(1);
+      expect(typeof s1.tests[0]).to.equal('number');
+    });
+  });
+
 });
